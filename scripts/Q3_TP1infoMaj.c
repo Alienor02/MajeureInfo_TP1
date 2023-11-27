@@ -1,7 +1,7 @@
 
 /*
 QUESTION 3 :
-Gestion de la sortie du shell avec la commande “exit” ou un <ctrl>+d;
+Management of the shell output with the command ”exit” or with <ctrl>+d.
 
 */
 

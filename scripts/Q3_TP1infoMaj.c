@@ -46,15 +46,12 @@ int main() {
         // read user input
         char* input_error = fgets(input, sizeof(input), stdin);
         // making sure the user input is correct
-        if (input_error == NULL) { 
-            perror("Error reading input");
-            exit(EXIT_FAILURE);
-        }
+
         // remove the newline char at the end of the input
-        input[strcspn(input, "\n")] = '\0'; 
+        input[strcspn(input, "\n")] = '\0';
 
         // exit if the user types 'exit'
-        if (strcmp(input, "exit") == 0) {
+        if (input_error == NULL || strcmp(input, "exit") == 0) {
             enseash_exit();
             break;
         }

@@ -24,6 +24,7 @@ void display_prompt() {
     write(STDOUT_FILENO, prompt_message, sizeof(prompt_message) - 1);
 }
 
+//function to display an exit message (for a future version)
 void enseash_exit() {
     const char goodbye_message[] = "Au revoir !\n";
     write(STDOUT_FILENO, goodbye_message, sizeof(goodbye_message) - 1);

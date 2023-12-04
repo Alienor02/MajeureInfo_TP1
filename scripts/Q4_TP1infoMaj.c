@@ -1,6 +1,8 @@
+
 /*
 QUESTION 4 :
 Display the return code (or signal) of the previous command in the prompt.
+
 */
 
 #include <stdio.h>
@@ -10,7 +12,9 @@ Display the return code (or signal) of the previous command in the prompt.
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define INPUT_SIZE 200
+#define INPUT_SIZE 1000
+#define STATUS_MESSAGE_SIZE 64
+
 
 // function to display a welcome message
 void display_welcome() {
@@ -18,10 +22,23 @@ void display_welcome() {
     write(STDOUT_FILENO, welcome_message, sizeof(welcome_message) - 1);
 }
 
-// function to display a prompt message
-void display_prompt() {
-    const char prompt_message[] = "enseash %% ";
-    write(STDOUT_FILENO, prompt_message, sizeof(prompt_message) - 1);
+// function to display a prompt message with the signal or code associated
+void display_prompt(int code, int signal) {
+    if (code != -1){ // case of an exit
+        char prompt_message[22];
+        sprintf(prompt_message, "enseash [exit:%d] %% ", code);  
+        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
+    }
+    else if (signal != -1){ // case of an interruption by a signal
+        char prompt_message[22];
+        sprintf(prompt_message, "enseash [sign:%d] %% ", signal);
+        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
+    }
+    else { // case without exit or interruption 
+        char prompt_message[11];
+        sprintf(prompt_message, "enseash %% ");
+        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
+    }
 }
 
 // function to display an exit message
@@ -30,62 +47,75 @@ void enseash_exit() {
     write(STDOUT_FILENO, goodbye_message, sizeof(goodbye_message) - 1);
 }
 
+// function to display a new line in the shell
+void disp_NewLine() {
+    const char newLineChar[] = "\n\r";
+    write(STDOUT_FILENO, newLineChar, sizeof(newLineChar) - 1);
+}
 
+
+int readCommand(char* input){ // read user input and execute exit command
+
+    // read user input
+    char* err = fgets(input, INPUT_SIZE, stdin);
+
+    // remove the newline char at the end of the input
+    input[strlen(input)-1] = '\0';
+
+    return (err == NULL); // return 1 if there was an error, 0 if not.
+}
 
 //
-void execut(char *command){
-    char command_path[]="/bin/";
-    strcat(command_path, command);
-    execlp(command_path, command, (char *)NULL);
+int execute_cmd(char *command){
 
-    // in case it fails
-    perror("Error executing command");
-    exit(EXIT_FAILURE);
+    if (strlen(command)){ // check if the input is not empty
+        char command_path[]="/bin/";
+        strcat(command_path, command);
+        execlp(command_path, command, (char *)NULL);
+
+        // in case the execution fails
+        perror("Error executing command");
+        exit(EXIT_FAILURE);
+    }
+    display_prompt(-1, -1);
+    exit(EXIT_SUCCESS); // the case of an empty command : input = ""
 }
 
-void writeCode(int code, int signal){
-    char code_buffer[20];
-    char signal_buffer[20];
-
-    sprintf(code_buffer, "%d", code);
-    sprintf(signal_buffer, "%d", signal);
-
-    write(STDOUT_FILENO, code_buffer, strlen(code_buffer));
-    write(STDOUT_FILENO, signal_buffer, strlen(signal_buffer));
-}
 
 int main(){
-    int nbChar;
     int status;
     char command[INPUT_SIZE];
-
     display_welcome();
+    display_prompt(-1, -1);
 
     while(1){
-        display_prompt();
-
-        nbChar = read(STDIN_FILENO, command, INPUT_SIZE);
-        command[nbChar-1] = '\0';
-
-        if(strcmp(command, "exit")==0 || strcmp(command, "")==0){
+        
+        // "command" receives user input and make sure there is no input error
+        int input_error = readCommand(command);
+        
+        // exit if the user types 'exit' or in case of input error
+        if (input_error || strcmp(command, "exit") == 0) {
+            if (input_error){
+                disp_NewLine();
+            }
             enseash_exit();
             break;
         }
 
-        pid_t ret = fork();
 
-        if(ret==0){
-            execut(command); //child
+        pid_t pid = fork();
+
+        if(pid==0){
+            execute_cmd(command); //child
         }
         else{
             wait(&status); //parent
-            if(WIFEXITED(status) != -1){
-                writeCode(WEXITSTATUS(status),0);
-            }
-            else if(WIFSIGNALED(status)){
-                writeCode(0,WTERMSIG(status));
+            // show prompt message with EXITSTATUS or SIGNAL, ready for next input
+            if (strlen(command)) { // the case of an empty command has already been handled previously
+            display_prompt(WEXITSTATUS(status), WTERMSIG(status));
             }
         }
+
     }
     return 0;
 }

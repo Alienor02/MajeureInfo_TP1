@@ -12,7 +12,6 @@ Measurement of the command execution time using the call clock_gettime.
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
-#include <bits/time.h>
 
 
 #define INPUT_SIZE 1000

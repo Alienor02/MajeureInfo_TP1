@@ -12,7 +12,7 @@ The project consists of a single C file, `enseash.c`, implementing the ENSEASH S
 - **display_welcome():** Displays a welcome message upon launching the shell.
 - **display_prompt():** Generates and displays the prompt, including exit status, signal, and execution time.
 - **enseash_exit():** Displays a goodbye message when exiting the shell.
-- **readCommand():** Reads user input, ensuring no errors occur, and handles the exit command.
+- **read_command():** Reads user input, ensuring no errors occur, and handles the exit command.
 - **execute_cmd():** Executes the entered command, capturing information such as exit status and execution time.
 
 ## Features

@@ -79,6 +79,8 @@ void execute_cmd(char *command){
             strcat(command_path, command);
             execlp(command_path, command, (char *)NULL);
             */
+            // this part was only used for previous questions (command with no arguments)
+            
             execlp("sh", "sh", "-c", command, (char *)NULL); // execution of a command that takes arguments
 
             // in case the execution fails

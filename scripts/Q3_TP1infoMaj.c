@@ -13,7 +13,6 @@ Gestion de la sortie du shell avec la commande “exit” ou un <ctrl>+d;
 #include <sys/wait.h>
 
 #define INPUT_SIZE 200
-#define command_path "/bin/"
 
 // function to display a welcome message
 void display_welcome() {
@@ -33,9 +32,40 @@ void enseash_exit() {
     write(STDOUT_FILENO, goodbye_message, sizeof(goodbye_message) - 1);
 }
 
+// function to display a new line in the shell
+void disp_NewLine() {
+    const char newLineChar[] = "\n\r";
+    write(STDOUT_FILENO, newLineChar, sizeof(newLineChar) - 1);
+}
+
+int readCommand(char* input){ // read user input and execute exit command
+
+    // read user input
+    char* err = fgets(input, INPUT_SIZE, stdin);
+
+    // remove the newline char at the end of the input
+    input[strlen(input)-1] = '\0';
+
+    return (err == NULL); // return 1 if there was an error, 0 if not.
+}
+
+int execute_cmd(char *command){ // execute user input as a command
+
+    if (strlen(command)){ // check if the input is not empty
+        char command_path[]="/bin/";
+        strcat(command_path, command);
+        execlp(command_path, command, (char *)NULL);
+        // in case the execution fails
+        perror("Error executing command");
+        exit(EXIT_FAILURE);
+    }
+    else{
+        exit(EXIT_SUCCESS); // the case of an empty command : input = ""
+    }
+}
 
 int main() {
-    char input[INPUT_SIZE];
+    char command[INPUT_SIZE];
 
     // show welcome message
     display_welcome();
@@ -43,18 +73,18 @@ int main() {
         // show prompt message
         display_prompt();
 
-        // read user input
-        char* input_error = fgets(input, sizeof(input), stdin);
-        // making sure the user input is correct
-
-        // remove the newline char at the end of the input
-        input[strcspn(input, "\n")] = '\0';
-
+        // "command" receives user input and make sure there is no input error
+        int input_error = readCommand(command);
+        
         // exit if the user types 'exit' or in case of input error
-        if (input_error == NULL || strcmp(input, "exit") == 0) {
+        if (input_error || strcmp(command, "exit") == 0) {
+            if (input_error){
+                disp_NewLine();
+            }
             enseash_exit();
             break;
         }
+
 
         // execute commands that take no arguments
         pid_t pid = fork();
@@ -66,17 +96,12 @@ int main() {
         
         else if (pid == 0) {
             // child process
-            if (strlen(input)){
-                strcat(command_path, input);
-                int exec_error = execlp(command_path, input, (char *)NULL);
-                if (exec_error == -1) {
-                    perror("Error executing command");
-                    exit(EXIT_FAILURE);
-                }
-                // the case execlp fails
-                exit(EXIT_FAILURE);
-            }
-            exit(EXIT_SUCCESS); // the case of an empty command : input = ""
+            execute_cmd(command);
+            /*
+            execution of the command :
+            -exits with EXIT_FAILURE if it failed
+            -exits with EXIT_SUCCESS if the input was empty : command = ""
+            */
         }
         
         else {

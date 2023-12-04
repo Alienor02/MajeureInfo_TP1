@@ -10,7 +10,6 @@ Display the return code (or signal) of the previous command in the prompt.
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <time.h>
 
 
 #define INPUT_SIZE 1000

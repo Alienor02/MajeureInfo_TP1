@@ -1,6 +1,6 @@
 # Lab Report for TPSP1 : ENSEASH Shell
 
-This project was made by Aurélien POINSEL and Aliénor D'IRUMBERRY DE SALABERRY
+This project was made by Aliénor D'IRUMBERRY DE SALABERRY and Aurélien POINSEL.
 
 ## Overview
 This project, titled ENSEASH Shell, is a simple shell implementation developed in C. The shell is designed to execute commands, provide information about their execution, and support various features such as command execution with arguments, exit status display, time measurement, and more.

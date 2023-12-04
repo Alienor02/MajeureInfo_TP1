@@ -31,7 +31,7 @@ Our ENSEASH Shell supports various features as required by the lab specification
 These are all the features we could implement during the labs. We couldn't manage to finalize our project in time, but the result remains very satisfying. The execution and appearance of our shell seem flawless, and our final code is really clean.
 
 ## Potential enhancements
-While the project meets the requirements previously mentionned, there are some potential enhancements:
+While the project meets the requirements previously mentionned, here are several ways to improve it:
 
 1. The project specifications expected more options, such as :
 - Redirections with `<` and `>`: Manages input and output redirection.
@@ -45,4 +45,5 @@ While the project meets the requirements previously mentionned, there are some p
 3. Error Handling: This is hard to estimate as our shell runs really well, but our code could probobably benefit from additional error handlers to manage every possible cases and situations.
 
 ## Conclusion
-Our ENSEASH Shell is a functional micro shell supporting many essential features. 
+Our ENSEASH Shell is a functional micro shell supporting many essential features. It provides a solid foundation for further development, and its conception taught us a lot about shell programming. We also tried our best to produce a clean code that is easily readable, and we undoubtly achieved more proficiency in C programming.
+

@@ -1,7 +1,7 @@
 
 /*
 QUESTION 3 :
-Management of the shell output with the command ”exit” or with <ctrl>+d.
+Gestion de la sortie du shell avec la commande “exit” ou un <ctrl>+d;
 
 */
 
@@ -13,7 +13,7 @@ Management of the shell output with the command ”exit” or with <ctrl>+d.
 #include <sys/wait.h>
 
 #define INPUT_SIZE 200
-
+#define command_path "/bin/"
 
 // function to display a welcome message
 void display_welcome() {
@@ -50,7 +50,7 @@ int main() {
         // remove the newline char at the end of the input
         input[strcspn(input, "\n")] = '\0';
 
-        // exit if the user types 'exit'
+        // exit if the user types 'exit' or in case of input error
         if (input_error == NULL || strcmp(input, "exit") == 0) {
             enseash_exit();
             break;
@@ -66,15 +66,17 @@ int main() {
         
         else if (pid == 0) {
             // child process
-            char command_path[] = "/bin/";
-            strcat(command_path, input);
-            int exec_error = execlp(command_path, input, (char *)NULL);
-            if (exec_error == -1) {
-                perror("Error executing command");
+            if (strlen(input)){
+                strcat(command_path, input);
+                int exec_error = execlp(command_path, input, (char *)NULL);
+                if (exec_error == -1) {
+                    perror("Error executing command");
+                    exit(EXIT_FAILURE);
+                }
+                // the case execlp fails
                 exit(EXIT_FAILURE);
             }
-            // the case if execlp fails
-            exit(EXIT_FAILURE);
+            exit(EXIT_SUCCESS); // the case of an empty command : input = ""
         }
         
         else {

@@ -1,7 +1,7 @@
 
 /*
 QUESTION 1 :
-Affichage d’un message d’accueil, suivi d’un prompt simple
+Display a welcome message, followed by a simple prompt. 
 */
 
 #include <stdio.h>

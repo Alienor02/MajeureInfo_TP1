@@ -28,8 +28,8 @@ The ENSEASH Shell supports various features as required by the lab specification
 
 6. **Executing Complex Commands:** Handles commands with arguments seamlessly.
 
-7. **Redirections with `<` and `>`:** Manages input and output redirection.
 
-8. **Pipe Redirection with `|`:** Implements pipe redirection to connect the output of one command to the input of another.
-
-9. **Running Commands in the Background with `&`:** Supports running commands in the background, displaying immediate prompts.
+These were the features we could implement in time. We couldn't manage to finalize our project at the end of the last lab. The project specifications expected more options, such as :
+- **Redirections with `<` and `>`:** Manages input and output redirection.
+- **Pipe Redirection with `|`:** Implements pipe redirection to connect the output of one command to the input of another.
+- **Running Commands in the Background with `&`:** Supports running commands in the background, displaying immediate prompts.

@@ -4,13 +4,14 @@ QUESTION 4 :
 Display the return code (or signal) of the previous command in the prompt.
 
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
+
 
 #define INPUT_SIZE 1000
 #define STATUS_MESSAGE_SIZE 64
@@ -24,21 +25,18 @@ void display_welcome() {
 
 // function to display a prompt message with the signal or code associated
 void display_prompt(int code, int signal) {
+    char prompt_message[50];
     if (code != -1){ // case of an exit
-        char prompt_message[22];
         sprintf(prompt_message, "enseash [exit:%d] %% ", code);  
-        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
     }
     else if (signal != -1){ // case of an interruption by a signal
-        char prompt_message[22];
         sprintf(prompt_message, "enseash [sign:%d] %% ", signal);
-        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
     }
     else { // case without exit or interruption 
-        char prompt_message[11];
         sprintf(prompt_message, "enseash %% ");
-        write(STDOUT_FILENO, prompt_message, sizeof(prompt_message));
     }
+    write(STDOUT_FILENO, prompt_message, strlen(prompt_message));
+
 }
 
 // function to display an exit message
@@ -83,7 +81,6 @@ int execute_cmd(char *command){
 
 
 int main(){
-    int status;
     char command[INPUT_SIZE];
     display_welcome();
     display_prompt(-1, -1);
@@ -106,10 +103,14 @@ int main(){
         pid_t pid = fork();
 
         if(pid==0){
-            execute_cmd(command); //child
+            // Child process
+            execute_cmd(command); 
         }
         else{
-            wait(&status); //parent
+            // Parent process
+            int status;
+            wait(&status);
+
             // show prompt message with EXITSTATUS or SIGNAL, ready for next input
             if (strlen(command)) { // the case of an empty command has already been handled previously
             display_prompt(WEXITSTATUS(status), WTERMSIG(status));
